@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.text.LineBreaker;
+import android.icu.lang.UCharacter;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,41 +20,27 @@ public class ViewSigns extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_signs);
 
-        // Создаем ScrollView
-        ScrollView scrollView = new ScrollView(this);
-        scrollView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-
-        // Создаем LinearLayout внутри ScrollView
-        LinearLayout mainLayout = new LinearLayout(this);
-        mainLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
-        mainLayout.setOrientation(LinearLayout.VERTICAL);
+        ScrollView scrollView = findViewById(R.id.scrollView);
+        LinearLayout mainLayout;
+        mainLayout = findViewById(R.id.mainLinearLayout);
 
         // Создаем несколько пользовательских элементов
-        for (int i = 0; i < 100; i++) {
-            LinearLayout element = createCustomElement(R.drawable.sign39, "Warning signs " + i);
+        for (int i = 1; i <= 49; i++) {
+            int imageResource = getResources().getIdentifier("sign" + i, "drawable", getPackageName());
+            LinearLayout element = createCustomElement(imageResource, "Warning signs " + i);
             mainLayout.addView(element);
         }
-
-        // Добавляем LinearLayout в ScrollView
-        scrollView.addView(mainLayout);
-
-        // Устанавливаем ScrollView в качестве содержимого активности
-        setContentView(scrollView);
     }
 
     // Метод для создания элемента с изображением и текстом
     private LinearLayout createCustomElement(int imageResource, String text) {
-        // Тот же код, что и раньше
         // Создаем новый LinearLayout
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                170)); // Устанавливаем высоту в 170dp
+                300)); // Устанавливаем высоту в 170dp
         linearLayout.setPadding(10, 10, 10, 10); // Устанавливаем отступы
 
         // Создаем CardView
@@ -60,7 +48,9 @@ public class ViewSigns extends Activity {
         cardView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));
+        cardView.setPadding(10, 10, 10, 10);
         cardView.setRadius(10); // Устанавливаем скругленные углы
+
 
         // Создаем RelativeLayout внутри CardView
         RelativeLayout relativeLayout = new RelativeLayout(this);
@@ -72,25 +62,26 @@ public class ViewSigns extends Activity {
         // Создаем ImageView
         ImageView imageView = new ImageView(this);
         imageView.setLayoutParams(new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                100)); // Устанавливаем высоту в 100dp
+                300,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
         imageView.setPadding(10, 10, 10, 10); // Устанавливаем отступы
         imageView.setImageResource(imageResource);
         relativeLayout.addView(imageView);
 
         // Создаем TextView
         TextView textView = new TextView(this);
+        relativeLayout.addView(textView);
         RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                500,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textParams.addRule(RelativeLayout.BELOW, imageView.getId()); // Размещаем текст под изображением
-        textParams.addRule(RelativeLayout.CENTER_HORIZONTAL); // Центрируем текст по горизонтали
+        textParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, imageView.getId());
         textView.setLayoutParams(textParams);
         textView.setText(text);
         textView.setTextColor(0xFF000FFF); // Устанавливаем цвет текста
         textView.setTextSize(20); // Устанавливаем размер текста
+        textView.setBreakStrategy(LineBreaker.BREAK_STRATEGY_BALANCED);
         textView.setTypeface(null, Typeface.BOLD); // Устанавливаем жирный стиль текста
-        relativeLayout.addView(textView);
+
 
         // Добавляем RelativeLayout в CardView
         cardView.addView(relativeLayout);
