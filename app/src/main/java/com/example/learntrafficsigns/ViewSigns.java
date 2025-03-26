@@ -1,35 +1,34 @@
 package com.example.learntrafficsigns;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.text.LineBreaker;
-import android.icu.lang.UCharacter;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import androidx.cardview.widget.CardView;
 import android.widget.TextView;
 import android.widget.ScrollView;
 import android.widget.RelativeLayout;
-import android.view.ViewGroup;
+import android.content.Intent;
+
+import java.util.List;
+
 public class ViewSigns extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_signs);
-
         ScrollView scrollView = findViewById(R.id.scrollView);
         LinearLayout mainLayout;
         mainLayout = findViewById(R.id.mainLinearLayout);
-
-        // Создаем несколько пользовательских элементов
-        for (int i = 1; i <= 49; i++) {
-            int imageResource = getResources().getIdentifier("sign" + i, "drawable", getPackageName());
-            LinearLayout element = createCustomElement(imageResource, "Warning signs " + i);
+        DBHelper dbHelper = new DBHelper(this);
+        dbHelper.create_db();
+        Intent intent = getIntent();
+        String category = intent.getStringExtra("Category");
+        List<TrafficSign> TrafficSignsList = dbHelper.getItemsByCategory(category);
+        for (TrafficSign data : TrafficSignsList) {
+            int imageResource = getResources().getIdentifier(data.getPicture(), "drawable", getPackageName());
+            LinearLayout element = createCustomElement(imageResource, data.name);
             mainLayout.addView(element);
         }
     }
